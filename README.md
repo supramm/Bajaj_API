@@ -236,6 +236,23 @@ Response:
 * Portfolio average price is calculated using weighted average pricing
 
 ---
+---
+
+## SAMPLE API USSAGE (CURL)
+
+# Fetch all tradable instruments
+curl -X GET http://127.0.0.1:8000/api/v1/instruments
+# Place a MARKET BUY order
+curl -X POST http://127.0.0.1:8000/api/v1/orders \
+-H "Content-Type: application/json" \
+-d '{
+  "symbol": "TCS",
+  "side": "BUY",
+  "orderType": "MARKET",
+  "quantity": 5
+}'
+
+```
 
 ## Assumptions Made
 
