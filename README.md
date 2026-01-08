@@ -1,36 +1,29 @@
 
-# Trading Platform – Backend API, SDK & UI
+# Trading Backend API (Simulated Broker System)
 
-This project is a **simplified trading platform** built using **Python and FastAPI**.  
-It provides REST APIs for placing trades, tracking orders, viewing portfolios, and includes:
-- A **wrapper SDK**
-- A **web-based UI**
-- **Swagger API documentation**
+## Overview
 
-This project is designed as a **campus hiring assignment submission**.
+This project is a **Python-based backend trading system** built using **FastAPI**.  
+It simulates core functionalities of an online stock broking platform such as:
 
----
+- Viewing tradable instruments  
+- Placing buy and sell orders (Market and Limit)  
+- Executing orders  
+- Viewing executed trades  
+- Viewing portfolio holdings  
 
-## Features
-
-- 📈 List available trading instruments
-- 🛒 Place BUY / SELL orders
-- ⚡ Immediate order execution (simulated)
-- 📊 Trade history tracking
-- 💼 Portfolio management
-- 🌐 Web UI dashboard
-- 📘 Swagger API documentation
-- 📦 Python SDK wrapper
+The system uses **in-memory storage** and does **not connect to real markets**.  
+The focus of this project is on **API design, backend structure, and trading logic simulation**.
 
 ---
 
-## Tech Stack
+## Technology Stack
 
-- Python 3.x
-- FastAPI
-- Uvicorn
-- Jinja2 (HTML templates)
-- Requests (SDK)
+- **Language:** Python 3  
+- **Framework:** FastAPI  
+- **Server:** Uvicorn  
+- **Data Storage:** In-memory (Python dictionaries and lists)  
+- **API Format:** JSON  
 
 ---
 
@@ -38,16 +31,27 @@ This project is designed as a **campus hiring assignment submission**.
 
 ```
 
-trading-platform/
+trading_api/
 │
-├── app.py                 # FastAPI backend
-├── templates/
-│   └── index.html         # Web UI
-├── static/
-│   └── style.css          # UI styling
-├── sdk/
-│   └── client.py          # Python SDK
-├── test_sdk.py            # SDK test script
+├── app.py
+│
+├── data/
+│   └── store.py
+│
+├── models/
+│   ├── order.py
+│   ├── trade.py
+│   └── portfolio.py
+│
+├── routes/
+│   ├── instruments.py
+│   ├── orders.py
+│   ├── trades.py
+│   └── portfolio.py
+│
+├── services/
+│   └── order_service.py
+│
 ├── requirements.txt
 └── README.md
 
@@ -55,139 +59,208 @@ trading-platform/
 
 ---
 
-## Setup Instructions
+## Setup and Run Instructions
 
-### 1. Clone Repository
+### Prerequisites
+- Python 3.9 or higher
+- pip
 
+### Install Dependencies
 ```bash
-git clone <your-repo-url>
-cd trading-platform
+pip install fastapi uvicorn
 ````
 
----
-
-### 2. Create Virtual Environment
-
-```bash
-python -m venv venv
-```
-
-Activate it:
-
-**Windows**
-
-```bash
-venv\Scripts\activate
-```
-
-**Mac/Linux**
-
-```bash
-source venv/bin/activate
-```
-
----
-
-### 3. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-If `requirements.txt` is not present:
-
-```bash
-pip install fastapi uvicorn jinja2 requests
-```
-
----
-
-## Running the Application
+### Run the Application
 
 ```bash
 uvicorn app:app --reload
 ```
 
-Server will start at:
+### Access the API
 
-```
-http://127.0.0.1:8000
-```
-
----
-
-## Access Points
-
-* 🌐 **Web UI**
-  [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
-
-* 📘 **Swagger API Docs**
-  [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* Base URL: `http://127.0.0.1:8000`
+* Swagger UI (API documentation): `http://127.0.0.1:8000/docs`
 
 ---
 
-## API Endpoints
+## API Details
 
-| Method | Endpoint                    | Description       |
-| ------ | --------------------------- | ----------------- |
-| GET    | `/api/v1/instruments`       | List instruments  |
-| POST   | `/api/v1/orders`            | Place an order    |
-| GET    | `/api/v1/orders/{order_id}` | Order status      |
-| GET    | `/api/v1/trades`            | Trade history     |
-| GET    | `/api/v1/portfolio`         | Portfolio summary |
+### Health Check
 
----
-
-## SDK Usage Example
-
-```python
-from sdk.client import TradingClient
-
-client = TradingClient("http://127.0.0.1:8000")
-
-print(client.get_instruments())
-print(client.place_order("TCS", "BUY", "MARKET", 10))
-print(client.get_portfolio())
+```
+GET /
 ```
 
-Run SDK test:
+Response:
 
-```bash
-python test_sdk.py
+```json
+{
+  "status": "API is running"
+}
 ```
 
 ---
 
-## Assumptions & Simplifications
+### Fetch Instruments
 
-* Single user system
-* In-memory storage (no database)
-* Orders are executed immediately
-* No real market data integration
-* No authentication
+```
+GET /api/v1/instruments
+```
 
----
+Response:
 
-## Future Enhancements
-
-* Limit order execution logic
-* Database integration
-* Authentication & authorization
-* Advanced UI (React / charts)
-* Order matching engine
-
----
-
-## Author
-
-**Supram Kumar**
-Computer Science Undergraduate
-AI & ML Specialization
+```json
+[
+  {
+    "symbol": "TCS",
+    "exchange": "NSE",
+    "instrumentType": "EQUITY",
+    "lastTradedPrice": 3850.0
+  }
+]
+```
 
 ---
 
-## License
+### Place Order
 
-This project is for **educational and evaluation purposes only**.
+```
+POST /api/v1/orders
+```
+
+Request Body:
+
+```json
+{
+  "symbol": "TCS",
+  "side": "BUY",
+  "orderType": "MARKET",
+  "quantity": 5
+}
+```
+
+Response:
+
+```json
+{
+  "orderId": "...",
+  "symbol": "TCS",
+  "side": "BUY",
+  "orderType": "MARKET",
+  "quantity": 5,
+  "price": null,
+  "status": "EXECUTED"
+}
+```
+
+Validations:
+
+* Quantity must be greater than 0
+* Symbol must exist
+* Price is mandatory for LIMIT orders
+
+---
+
+### Get Order Status
+
+```
+GET /api/v1/orders/{orderId}
+```
+
+Response:
+
+```json
+{
+  "orderId": "...",
+  "status": "EXECUTED",
+  "symbol": "TCS",
+  "side": "BUY",
+  "quantity": 5
+}
+```
+
+---
+
+### Fetch Trades
+
+```
+GET /api/v1/trades
+```
+
+Response:
+
+```json
+[
+  {
+    "tradeId": "...",
+    "orderId": "...",
+    "symbol": "TCS",
+    "quantity": 5,
+    "price": 3850.0
+  }
+]
+```
+
+---
+
+### Fetch Portfolio
+
+```
+GET /api/v1/portfolio
+```
+
+Response:
+
+```json
+[
+  {
+    "symbol": "TCS",
+    "quantity": 5,
+    "averagePrice": 3850.0,
+    "currentValue": 19250.0
+  }
+]
+```
+
+---
+
+## Order Execution Logic
+
+* **Market Orders:** Execute immediately at the last traded price
+* **Limit Orders:**
+
+  * BUY orders execute only if limit price is greater than or equal to market price
+  * SELL orders execute only if limit price is less than or equal to market price
+* Executed orders generate trades
+* Trades update portfolio holdings
+* Portfolio average price is calculated using weighted average pricing
+
+---
+
+## Assumptions Made
+
+* Single hardcoded user (no authentication)
+* No real market connectivity
+* In-memory data storage (data resets on server restart)
+* No order cancellation functionality
+* No partial order fills
+* Immediate execution simulation
+* Portfolio is a derived, read-only view
+
+---
+
+## Design Decisions
+
+* Separation of concerns using routes, services, models, and data layers
+* Business logic isolated in the service layer
+* RESTful API design principles followed
+* Clean and readable code for ease of evaluation and explanation
+
+---
+
+## Notes
+
+This project is designed for **demonstration and evaluation purposes only**.
+It focuses on backend design, API structure, and trading workflow simulation rather than production readiness.
 
 ```
