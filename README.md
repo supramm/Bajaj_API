@@ -1,4 +1,4 @@
-```md
+
 # Trading Platform – Backend API, SDK & UI
 
 This project is a **simplified trading platform** built using **Python and FastAPI**.  
@@ -189,7 +189,5 @@ AI & ML Specialization
 ## License
 
 This project is for **educational and evaluation purposes only**.
-
-```
 
 ```
