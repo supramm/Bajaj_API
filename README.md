@@ -1,36 +1,39 @@
 
+---
+
 # Trading Backend API (Simulated Broker System)
 
 ## Overview
 
-This project is a **Python-based backend trading system** built using **FastAPI**.  
+This project is a **Python-based backend trading system** built using **FastAPI**.
+
 It simulates core functionalities of an online stock broking platform such as:
 
-- Viewing tradable instruments  
-- Placing buy and sell orders (Market and Limit)  
-- Executing orders  
-- Viewing executed trades  
-- Viewing portfolio holdings  
+* Viewing tradable instruments
+* Placing buy and sell orders (Market and Limit)
+* Executing orders
+* Viewing executed trades
+* Viewing portfolio holdings
 
-The system uses **in-memory storage** and does **not connect to real markets**.  
+The system uses **in-memory storage** and does **not connect to real markets**.
+
 The focus of this project is on **API design, backend structure, and trading logic simulation**.
 
 ---
 
 ## Technology Stack
 
-- **Language:** Python 3  
-- **Framework:** FastAPI  
-- **Server:** Uvicorn  
-- **Data Storage:** In-memory (Python dictionaries and lists)  
-- **API Format:** JSON  
+* **Language:** Python 3
+* **Framework:** FastAPI
+* **Server:** Uvicorn
+* **Data Storage:** In-memory (Python dictionaries and lists)
+* **API Format:** JSON
 
 ---
 
 ## Project Structure
 
-```
-
+```text
 trading_api/
 │
 ├── app.py
@@ -55,31 +58,35 @@ trading_api/
 ├── requirements.txt
 └── README.md
 
-````
+```
 
 ---
 
 ## Setup and Run Instructions
 
 ### Prerequisites
-- Python 3.9 or higher
-- pip
+
+* Python 3.9 or higher
+* pip
 
 ### Install Dependencies
+
 ```bash
 pip install fastapi uvicorn
-````
+
+```
 
 ### Run the Application
 
 ```bash
 uvicorn app:app --reload
+
 ```
 
 ### Access the API
 
-* Base URL: `http://127.0.0.1:8000`
-* Swagger UI (API documentation): `http://127.0.0.1:8000/docs`
+* **Base URL:** `http://127.0.0.1:8000`
+* **Swagger UI (API documentation):** `http://127.0.0.1:8000/docs`
 
 ---
 
@@ -87,27 +94,24 @@ uvicorn app:app --reload
 
 ### Health Check
 
-```
-GET /
-```
+`GET /`
 
-Response:
+**Response:**
 
 ```json
 {
   "status": "API is running"
 }
+
 ```
 
 ---
 
 ### Fetch Instruments
 
-```
-GET /api/v1/instruments
-```
+`GET /api/v1/instruments`
 
-Response:
+**Response:**
 
 ```json
 [
@@ -118,17 +122,16 @@ Response:
     "lastTradedPrice": 3850.0
   }
 ]
+
 ```
 
 ---
 
 ### Place Order
 
-```
-POST /api/v1/orders
-```
+`POST /api/v1/orders`
 
-Request Body:
+**Request Body:**
 
 ```json
 {
@@ -137,9 +140,10 @@ Request Body:
   "orderType": "MARKET",
   "quantity": 5
 }
+
 ```
 
-Response:
+**Response:**
 
 ```json
 {
@@ -151,23 +155,22 @@ Response:
   "price": null,
   "status": "EXECUTED"
 }
+
 ```
 
-Validations:
+**Validations:**
 
 * Quantity must be greater than 0
 * Symbol must exist
-* Price is mandatory for LIMIT orders
+* Price is mandatory for `LIMIT` orders
 
 ---
 
 ### Get Order Status
 
-```
-GET /api/v1/orders/{orderId}
-```
+`GET /api/v1/orders/{orderId}`
 
-Response:
+**Response:**
 
 ```json
 {
@@ -177,17 +180,16 @@ Response:
   "side": "BUY",
   "quantity": 5
 }
+
 ```
 
 ---
 
 ### Fetch Trades
 
-```
-GET /api/v1/trades
-```
+`GET /api/v1/trades`
 
-Response:
+**Response:**
 
 ```json
 [
@@ -199,17 +201,16 @@ Response:
     "price": 3850.0
   }
 ]
+
 ```
 
 ---
 
 ### Fetch Portfolio
 
-```
-GET /api/v1/portfolio
-```
+`GET /api/v1/portfolio`
 
-Response:
+**Response:**
 
 ```json
 [
@@ -220,29 +221,37 @@ Response:
     "currentValue": 19250.0
   }
 ]
+
 ```
 
 ---
 
 ## Order Execution Logic
 
-* **Market Orders:** Execute immediately at the last traded price
+* **Market Orders:** Execute immediately at the last traded price.
 * **Limit Orders:**
+* **BUY** orders execute only if limit price is  market price.
+* **SELL** orders execute only if limit price is  market price.
 
-  * BUY orders execute only if limit price is greater than or equal to market price
-  * SELL orders execute only if limit price is less than or equal to market price
-* Executed orders generate trades
-* Trades update portfolio holdings
-* Portfolio average price is calculated using weighted average pricing
+
+* Executed orders generate trades.
+* Trades update portfolio holdings.
+* Portfolio average price is calculated using weighted average pricing.
 
 ---
----
 
-## SAMPLE API USSAGE (CURL)
+## Sample API Usage (cURL)
 
-# Fetch all tradable instruments
+**Fetch all tradable instruments:**
+
+```bash
 curl -X GET http://127.0.0.1:8000/api/v1/instruments
-# Place a MARKET BUY order
+
+```
+
+**Place a MARKET BUY order:**
+
+```bash
 curl -X POST http://127.0.0.1:8000/api/v1/orders \
 -H "Content-Type: application/json" \
 -d '{
@@ -254,34 +263,35 @@ curl -X POST http://127.0.0.1:8000/api/v1/orders \
 
 ```
 
+---
+
 ## Assumptions Made
 
-* Single hardcoded user (no authentication)
-* No real market connectivity
-* In-memory data storage (data resets on server restart)
-* No order cancellation functionality
-* No partial order fills
-* Immediate execution simulation
-* Portfolio is a derived, read-only view
+* Single hardcoded user (no authentication).
+* No real market connectivity.
+* In-memory data storage (data resets on server restart).
+* No order cancellation functionality.
+* No partial order fills.
+* Immediate execution simulation.
+* Portfolio is a derived, read-only view.
 
 ---
 
 ## Design Decisions
 
-* Separation of concerns using routes, services, models, and data layers
-* Business logic isolated in the service layer
-* RESTful API design principles followed
-* Clean and readable code for ease of evaluation and explanation
+* **Separation of Concerns:** Distinct layers for routes, services, models, and data.
+* **Business Logic:** Isolated in the service layer for maintainability.
+* **RESTful Design:** Follows standard HTTP methods and resource naming.
+* **Clean Code:** Prioritized readability for ease of evaluation.
+
 ---
 
 ## Screenshot
-<img width="1920" height="1080" alt="apis" src="https://github.com/user-attachments/assets/0ff6bc4a-a8f6-4f9d-a27d-b6859de30b73" />
-
+<p align="center">
+  <img src="https://github.com/supramm/Bajaj_API/raw/main/screenshots/apis.png" width="800" alt="API Documentation">
+</p>
 ---
 
 ## Notes
 
-This project is designed for **demonstration and evaluation purposes only**.
-It focuses on backend design, API structure, and trading workflow simulation rather than production readiness.
-
-```
+This project is designed for **demonstration and evaluation purposes only**. It focuses on backend architecture and trading workflows rather than production-grade security or persistence.
