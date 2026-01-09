@@ -272,6 +272,10 @@ curl -X POST http://127.0.0.1:8000/api/v1/orders \
 * Business logic isolated in the service layer
 * RESTful API design principles followed
 * Clean and readable code for ease of evaluation and explanation
+---
+
+## Screenshot
+<img width="1920" height="1080" alt="apis" src="https://github.com/user-attachments/assets/0ff6bc4a-a8f6-4f9d-a27d-b6859de30b73" />
 
 ---
 
